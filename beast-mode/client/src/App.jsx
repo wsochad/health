@@ -45,7 +45,17 @@ const api = {
 };
 
 // ─── HELPERS ─────────────────────────────────────────────────────
-const getToday = () => new Date().toISOString().slice(0, 10);
+const getToday = () => {
+  const now = new Date();
+  // Day resets at 11:00 AM UAE (07:00 UTC)
+  // Before 7am UTC = still the previous day
+  if (now.getUTCHours() < 7) {
+    const prev = new Date(now);
+    prev.setUTCDate(prev.getUTCDate() - 1);
+    return prev.toISOString().slice(0, 10);
+  }
+  return now.toISOString().slice(0, 10);
+};
 
 function getLv(xp)    { let l = LEVELS[0]; for (const v of LEVELS) if (xp >= v.min) l = v; return l; }
 function getNextLv(xp){ for (const l of LEVELS) if (xp < l.min) return l; return null; }
